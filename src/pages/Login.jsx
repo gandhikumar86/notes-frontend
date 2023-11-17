@@ -24,7 +24,7 @@ const Login = () => {
       //console.log(response);
       if (response.data === "Invalid username or password!") {
         alert("Invalid username or password!");
-      } else if (response.data === "Server Busy") {
+      } else if (response.data === "Verify your email") {
         alert("Verify your email id!");
       } else if (response?.status) {
         localStorage.setItem("userInfo", JSON.stringify(response.data));
