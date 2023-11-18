@@ -23,10 +23,12 @@ const SignUp = () => {
     try {
       const response = await axios.post(`${API_URL}/signin/verify`, formData);
       //console.log(response);
-      if (response.data === true) {
+      if (response.data === "none") {
         alert("Registration link successfully sent to your email id!");
-      } else if (response.data === false) {
+      } else if (response.data === "user") {
         alert("User id already exists!");
+      } else if (response.data === "verifyUser") {
+        alert("Already, verification email sent!");
       }
     } catch (e) {
       console.log("Error during registration! ", e);
