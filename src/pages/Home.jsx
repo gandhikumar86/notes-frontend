@@ -574,11 +574,11 @@ const Home = () => {
           </div>
         </>
       )}
-      {Object.keys(resp).length === 0 && (
+      {/*Object.keys(resp).length === 0 && (
         <p>
           Please, <Link to="/login">login</Link> here!
         </p>
-      )}
+      )*/}
     </>
   );
 };
