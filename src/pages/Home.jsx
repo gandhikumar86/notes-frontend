@@ -274,39 +274,37 @@ const Home = () => {
   };
 
   const handleLogout = async () => {
-    if (window.confirm("Are you sure to logout?")) {
-      try {
-        setShowLoader(true);
-        const user = await JSON.parse(localStorage.getItem("userInfo"));
-        const response = await axios.post(
-          `${API_URL}/login/logout`,
-          user.email
-        );
-        //alert(response.data);
-        if ((await response.data) === "deleted") {
-          localStorage.clear();
-          window.location.href = "/login";
-          setShowLoader(false);
-        } else {
-          alert("Server Busy!");
-        }
-      } catch (e) {
-        console.log("Log out Handler", e);
-        alert(
-          "Connection error, please try sometime later or it persists contact admin!"
-        );
+    if (!window.confirm("Are you sure to logout?")) {
+      return;
+    }
+    try {
+      setShowLoader(true);
+      const user = JSON.parse(localStorage.getItem("userInfo"));
+      const response = await axios.post(`${API_URL}/login/logout`, user.email);
+      //alert(response.data);
+      if ((await response.data) === "deleted") {
+        localStorage.clear();
+        setShowLoader(false);
+        navigate("/login");
+      } else {
+        alert("Server Busy!");
       }
+    } catch (e) {
+      console.log("Log out Handler", e);
+      alert(
+        "Connection error, please try sometime later or it persists contact admin!"
+      );
     }
   };
 
-  const handleOnSelect = async (e) => {
+  const handleOnSelect = (e) => {
     e.preventDefault();
-    setQueryCategory(await e.target.value);
+    setQueryCategory(e.target.value);
   };
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
-    const categ = await e.target.name.value.trim();
+    const categ = e.target.name.value.trim();
     if (categ.length === 0) {
       alert("Please enter valid category!");
       return;
@@ -347,7 +345,7 @@ const Home = () => {
     ) {
       return;
     }
-    const cat = await e.target.deleteSelect.value;
+    const cat = e.target.deleteSelect.value;
     //alert(categoryMap[cat]);
 
     const deleteCategoryId = categoryMap[cat];
