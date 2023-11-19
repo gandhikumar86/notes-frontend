@@ -456,9 +456,12 @@ const Home = () => {
                         autoComplete="off"
                       />
                     </Form.Group>
-                    <Button variant="primary" type="submit">
-                      Add Category
-                    </Button>
+                    <LoadingButton
+                      text="Add Category"
+                      type="submit"
+                      loading={showLoader}
+                      disabled={showLoader}
+                    ></LoadingButton>
                   </Form>
                 </Modal.Body>
               </Modal>
@@ -491,9 +494,13 @@ const Home = () => {
                         )}
                       </Form.Control>
                     </Form.Group>
-                    <Button style={{ backgroundColor: "red" }} type="submit">
-                      Delete Category
-                    </Button>
+                    <LoadingButton
+                      text="Delete Category"
+                      type="submit"
+                      loading={showLoader}
+                      disabled={showLoader}
+                      style={{ backgroundColor: "red" }}
+                    ></LoadingButton>
                   </Form>
                 </Modal.Body>
               </Modal>
@@ -546,11 +553,23 @@ const Home = () => {
                     </Form.Group>
                     {selectedNote ? (
                       <div className="edit-buttons">
-                        <button type="submit">Save</button>
-                        <button onClick={handleCancel}>Cancel</button>
+                        <LoadingButton
+                          text="Save"
+                          type="submit"
+                          loading={showLoader}
+                          disabled={showLoader}
+                        ></LoadingButton>
+                        <button onClick={handleCancel} disabled={showLoader}>
+                          Cancel
+                        </button>
                       </div>
                     ) : (
-                      <button type="submit">Add Note</button>
+                      <LoadingButton
+                        text="Add note"
+                        type="submit"
+                        loading={showLoader}
+                        disabled={showLoader}
+                      ></LoadingButton>
                     )}
                   </form>
                 </Modal.Body>
