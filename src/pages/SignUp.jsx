@@ -59,6 +59,11 @@ const SignUp = () => {
       alert(
         "Connection error, please try sometime later or it persists contact admin!"
       );
+      setFormData({
+        name: formData.name,
+        email: formData.email,
+        password: "",
+      });
     }
   };
   return (

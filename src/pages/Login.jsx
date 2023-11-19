@@ -51,6 +51,10 @@ const Login = () => {
       alert(
         "Connection error, please try sometime later or it persists contact admin!"
       );
+      setFormData({
+        email: formData.email,
+        password: "",
+      });
     }
   };
   return (
