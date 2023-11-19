@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Form, Button, FormGroup } from "react-bootstrap";
 import "../styles/SignUp.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_URL from "../../config/global";
+import LoadingButton from "../components/LoadingButton";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,17 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+
+  const [showLoader, setShowLoader] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user && user.token) {
+      navigate("/home");
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,28 +33,45 @@ const SignUp = () => {
     e.preventDefault();
     //console.log(formData);
     try {
+      setShowLoader(true);
       const response = await axios.post(`${API_URL}/signin/verify`, formData);
       //console.log(response);
+      setShowLoader(false);
       if (response.data === "none") {
-        alert("Registration link successfully sent to your email id!");
+        alert(
+          "Registration link successfully sent to your email id! Please, verify and then login!"
+        );
+        navigate("/login");
       } else if (response.data === "user") {
-        alert("User id already exists!");
+        alert("User id exists, already! Please, login!");
+        navigate("/login");
       } else if (response.data === "verifyUser") {
-        alert("Already, verification email sent!");
+        alert("Verification email sent, already! Please, verify!");
       }
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
     } catch (e) {
       console.log("Error during registration! ", e);
+      setShowLoader(false);
+      alert(
+        "Connection error, please try sometime later or it persists contact admin!"
+      );
     }
   };
   return (
     <Container>
-      <h1>Registration Form</h1>
+      <h1>Note App</h1>
+      <h2>Registration Form</h2>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <Form.Group>
           <Form.Label>Name</Form.Label>
           <Form.Control
             type="text"
             name="name"
+            placeholder=""
             value={formData.name}
             onChange={(e) => handleChange(e)}
             required
@@ -53,6 +82,7 @@ const SignUp = () => {
           <Form.Control
             type="email"
             name="email"
+            placeholder=""
             value={formData.email}
             onChange={(e) => handleChange(e)}
             required
@@ -63,14 +93,18 @@ const SignUp = () => {
           <Form.Control
             type="password"
             name="password"
+            placeholder=""
             value={formData.password}
             onChange={(e) => handleChange(e)}
             required
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Register
-        </Button>
+        <LoadingButton
+          text="Register"
+          type="submit"
+          loading={showLoader}
+          disabled={showLoader}
+        />
         <p>
           Already have an account? <Link to="/login">Login</Link>
         </p>
