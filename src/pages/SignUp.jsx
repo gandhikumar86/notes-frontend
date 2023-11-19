@@ -70,7 +70,7 @@ const SignUp = () => {
     <Container>
       <h1>Notes App</h1>
       <h2>Registration Form</h2>
-      <Form onSubmit={(e) => handleSubmit(e)}>
+      <Form onSubmit={(e) => handleSubmit(e)} disabled={showLoader}>
         <Form.Group>
           <Form.Label>Name</Form.Label>
           <Form.Control

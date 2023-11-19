@@ -61,7 +61,7 @@ const Login = () => {
     <Container>
       <h1>Notes App</h1>
       <h2>Login Form</h2>
-      <Form onSubmit={(e) => handleSubmit(e)}>
+      <Form onSubmit={(e) => handleSubmit(e)} disabled={showLoader}>
         <Form.Group>
           <Form.Label>Email</Form.Label>
           <Form.Control
