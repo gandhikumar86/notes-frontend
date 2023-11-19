@@ -345,7 +345,7 @@ const Home = () => {
           current.filter((n) => n.categoryId !== deleteCategoryId)
         );
 
-        if (!deleteCategoryId) {
+        if (deleteCategoryId) {
           setCategoryMap((current) => {
             const { cat, ...rest } = current;
             return rest;
