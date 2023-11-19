@@ -345,11 +345,13 @@ const Home = () => {
           current.filter((n) => n.categoryId !== deleteCategoryId)
         );
 
-        setCategoryMap((current) => {
-          const { cat, ...rest } = current;
-          return rest;
-        });
-        setCategories((current) => current.filter((cate) => cate !== cat));
+        if (!deleteCategoryId) {
+          setCategoryMap((current) => {
+            const { cat, ...rest } = current;
+            return rest;
+          });
+          setCategories((current) => current.filter((cate) => cate !== cat));
+        }
 
         setShowDeleteCategoryModal(false);
       } else {
