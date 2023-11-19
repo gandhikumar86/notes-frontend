@@ -4,6 +4,7 @@ import axios from "axios";
 import API_URL from "../../config/global";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Form, Modal } from "react-bootstrap";
+import LoadingButton from "../components/LoadingButton";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -39,6 +40,9 @@ const Home = () => {
   //     content: "bla bla note6",
   //   },
   // ]);
+
+  const [showLoader, setShowLoader] = useState(false);
+
   const [query, setQuery] = useState("");
   const [notes, setNotes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -272,6 +276,7 @@ const Home = () => {
   const handleLogout = async () => {
     if (window.confirm("Are you sure to logout?")) {
       try {
+        setShowLoader(true);
         const user = await JSON.parse(localStorage.getItem("userInfo"));
         const response = await axios.post(
           `${API_URL}/login/logout`,
@@ -279,6 +284,7 @@ const Home = () => {
         );
         //alert(response.data);
         if ((await response.data) === "deleted") {
+          setShowLoader(false);
           localStorage.clear();
           window.location.href = "/login";
         } else {
@@ -392,7 +398,9 @@ const Home = () => {
   return (
     <>
       {Object.keys(resp).length !== 0 && (
-        <>
+        <div
+          style={showLoader ? { pointerEvents: "none", opacity: "0.4" } : {}}
+        >
           <div>
             <h1>Welcome to our Notes App, {resp.name}!</h1>
           </div>
@@ -543,9 +551,13 @@ const Home = () => {
               />
             </div>
             <div>
-              <Button style={{ backgroundColor: "red" }} onClick={handleLogout}>
-                Log out
-              </Button>
+              <LoadingButton
+                onSubmit={handleLogout}
+                text="Log out"
+                loading={showLoader}
+                disabled={showLoader}
+                style={{ backgroundColor: "red" }}
+              ></LoadingButton>
             </div>
           </div>
           <div className="app-container">
@@ -609,7 +621,7 @@ const Home = () => {
                   })}
             </div>
           </div>
-        </>
+        </div>
       )}
       {/*Object.keys(resp).length === 0 && (
         <p>
