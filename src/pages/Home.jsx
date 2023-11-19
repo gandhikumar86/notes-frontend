@@ -656,11 +656,11 @@ const Home = () => {
           </div>
         </div>
       )}
-      {/*Object.keys(resp).length === 0 && (
-        <p>
-          Please, <Link to="/login">login</Link> here!
-        </p>
-      )*/}
+      {Object.keys(resp).length === 0 && showLoader === true ? (
+        <p>Please, wait!</p>
+      ) : (
+        ""
+      )}
     </>
   );
 };
