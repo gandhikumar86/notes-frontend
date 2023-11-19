@@ -389,7 +389,7 @@ const Home = () => {
       {Object.keys(resp).length !== 0 && (
         <>
           <div>
-            <h1>Welcome to our note app, {resp.name}!</h1>
+            <h1>Welcome to our Notes App, {resp.name}!</h1>
           </div>
           <div
             style={{
