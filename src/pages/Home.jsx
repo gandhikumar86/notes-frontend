@@ -76,8 +76,8 @@ const Home = () => {
   const [selectedNote, setSelectedNote] = useState(null);
 
   const [resp, setResp] = useState({});
-  useEffect(async () => {
-    const user = await JSON.parse(localStorage.getItem("userInfo"));
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
     if (user && user.token) {
       getData(user.token);
     } else {
@@ -354,17 +354,11 @@ const Home = () => {
       //alert(JSON.stringify(response.data));
 
       if (await response.data) {
-        if (deleteCategoryId) {
-          setNotes((current) =>
-            current.filter((n) => {
-              n.categoryId !== deleteCategoryId;
-            })
-          );
+        if (cat === "non-category") {
+          setNotes((current) => current.filter((n) => n.categoryId != null));
         } else {
           setNotes((current) =>
-            current.filter((n) => {
-              n.categoryId != deleteCategoryId;
-            })
+            current.filter((n) => n.categoryId !== deleteCategoryId)
           );
         }
 
