@@ -61,6 +61,14 @@ const Home = () => {
     setShowDeleteCategoryModal(true);
   };
 
+  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+  const handleAddNoteModalClose = () => {
+    setShowAddNoteModal(false);
+  };
+  const handleAddNoteModalShow = () => {
+    setShowAddNoteModal(true);
+  };
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const prevNoteRef = useRef({ title: "", content: "" });
@@ -139,6 +147,7 @@ const Home = () => {
         setNotes([newNote, ...notes]);
         setTitle("");
         setContent("");
+        setShowAddNoteModal(false);
         alert("New note added!");
       } else {
         alert("New note not synced!");
@@ -152,6 +161,7 @@ const Home = () => {
   };
 
   const handleNoteClick = (note) => {
+    setShowAddNoteModal(true);
     setSelectedNote(note);
     setTitle(note.title);
     setContent(note.content);
@@ -219,11 +229,12 @@ const Home = () => {
   };
 
   const handleCancel = () => {
-    alert("Note update cancelled!");
+    if (selectedNote) alert("Note update cancelled!");
     setTitle("");
     setContent("");
     setSelectedNote(null);
     setAddNoteCategory("non-category");
+    setShowAddNoteModal(false);
   };
 
   const deleteNote = async (event, deleteNoteId) => {
@@ -470,6 +481,64 @@ const Home = () => {
                   </Form>
                 </Modal.Body>
               </Modal>
+              <Button onClick={handleAddNoteModalShow}>Add Note</Button>{" "}
+              <Modal show={showAddNoteModal} onHide={handleCancel}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Add Note</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <form
+                    className="note-form"
+                    onSubmit={(event) =>
+                      selectedNote
+                        ? handleUpdateNote(event)
+                        : handleAddNote(event)
+                    }
+                  >
+                    <input
+                      value={title}
+                      onChange={(event) => setTitle(event.target.value)}
+                      placeholder="Title"
+                      required
+                    ></input>
+                    <textarea
+                      value={content}
+                      onChange={(event) => setContent(event.target.value)}
+                      placeholder="Content"
+                      rows={10}
+                      required
+                    ></textarea>
+                    <Form.Group controlId="addNoteCategorySelect">
+                      <Form.Label>Select category</Form.Label>
+                      <Form.Control
+                        disabled={selectedNote}
+                        as="select"
+                        value={addNoteCategory}
+                        onChange={(e) => {
+                          //alert(e.target.value);
+                          setAddNoteCategory(e.target.value);
+                        }}
+                      >
+                        {categories.map((c, i) =>
+                          c === "all-category" ? (
+                            ""
+                          ) : (
+                            <option key={i}>{c}</option>
+                          )
+                        )}
+                      </Form.Control>
+                    </Form.Group>
+                    {selectedNote ? (
+                      <div className="edit-buttons">
+                        <button type="submit">Save</button>
+                        <button onClick={handleCancel}>Cancel</button>
+                      </div>
+                    ) : (
+                      <button type="submit">Add Note</button>
+                    )}
+                  </form>
+                </Modal.Body>
+              </Modal>
             </div>
             <div>
               <input
@@ -479,55 +548,13 @@ const Home = () => {
                 value={query}
               />
             </div>
-            <Link onClick={handleLogout}>Log out</Link>
+            <div>
+              <Button style={{ backgroundColor: "red" }} onClick={handleLogout}>
+                Log out
+              </Button>
+            </div>
           </div>
           <div className="app-container">
-            <form
-              className="note-form"
-              onSubmit={(event) =>
-                selectedNote ? handleUpdateNote(event) : handleAddNote(event)
-              }
-            >
-              <input
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder="Title"
-                required
-              ></input>
-              <textarea
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                placeholder="Content"
-                rows={10}
-                required
-              ></textarea>
-
-              <Form.Group controlId="addNoteCategorySelect">
-                <Form.Label>Select category</Form.Label>
-                <Form.Control
-                  disabled={selectedNote}
-                  as="select"
-                  value={addNoteCategory}
-                  onChange={(e) => {
-                    //alert(e.target.value);
-                    setAddNoteCategory(e.target.value);
-                  }}
-                >
-                  {categories.map((c, i) =>
-                    c === "all-category" ? "" : <option key={i}>{c}</option>
-                  )}
-                </Form.Control>
-              </Form.Group>
-
-              {selectedNote ? (
-                <div className="edit-buttons">
-                  <button type="submit">Save</button>
-                  <button onClick={handleCancel}>Cancel</button>
-                </div>
-              ) : (
-                <button type="submit">Add Note</button>
-              )}
-            </form>
             <div className="notes-grid">
               {notes.length !== 0 &&
                 notes
