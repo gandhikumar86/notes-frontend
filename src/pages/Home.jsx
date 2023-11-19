@@ -284,9 +284,9 @@ const Home = () => {
         );
         //alert(response.data);
         if ((await response.data) === "deleted") {
-          setShowLoader(false);
           localStorage.clear();
           window.location.href = "/login";
+          setShowLoader(false);
         } else {
           alert("Server Busy!");
         }
