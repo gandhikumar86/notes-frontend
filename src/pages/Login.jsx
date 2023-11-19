@@ -91,7 +91,8 @@ const Login = () => {
           disabled={showLoader}
         />
         <p>
-          Do not have an account? <Link to="/">Register</Link>
+          Do not have an account?
+          <Link to={showLoader ? null : "/"}>Register</Link>
         </p>
       </Form>
     </Container>

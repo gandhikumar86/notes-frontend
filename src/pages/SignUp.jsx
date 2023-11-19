@@ -111,7 +111,8 @@ const SignUp = () => {
           disabled={showLoader}
         />
         <p>
-          Already have an account? <Link to="/login">Login</Link>
+          Already have an account?
+          <Link to={showLoader ? null : "/login"}>Login</Link>
         </p>
       </Form>
     </Container>
