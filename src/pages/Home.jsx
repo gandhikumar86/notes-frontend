@@ -366,7 +366,8 @@ const Home = () => {
         }
 
         setShowDeleteCategoryModal(false);
-        alert(`Category "${cat}" deleted!`);
+        if (deleteCategoryId) alert(`Category "${cat}" deleted!`);
+        else alert("Non category notes delted!");
       } else {
         alert("Try again, category not deleted!");
         return;

@@ -16,15 +16,15 @@ const Login = () => {
   const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(async () => {
-    const user = await JSON.parse(localStorage.getItem("userInfo"));
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
     if (user && user.token) {
       navigate("/home");
     }
   }, []);
 
-  const handleChange = async (e) => {
-    const { name, value } = await e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     //console.log(formData);
   };
