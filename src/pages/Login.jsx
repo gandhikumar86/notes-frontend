@@ -59,7 +59,7 @@ const Login = () => {
   };
   return (
     <Container>
-      <h1>Note App</h1>
+      <h1>Notes App</h1>
       <h2>Login Form</h2>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <Form.Group>
