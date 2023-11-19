@@ -68,8 +68,8 @@ const Home = () => {
   const [selectedNote, setSelectedNote] = useState(null);
 
   const [resp, setResp] = useState({});
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
+  useEffect(async () => {
+    const user = await JSON.parse(localStorage.getItem("userInfo"));
     if (user && user.token) {
       getData(user.token);
     } else {
@@ -85,22 +85,22 @@ const Home = () => {
       };
       const response = await axios.get(`${API_URL}/home`, config);
       //console.log(response);
-      if (response.data === "Invalid Token") {
+      if ((await response.data) === "Invalid Token") {
         alert("Login again!");
-      } else if (response.data === "Server Busy") {
+      } else if ((await response.data) === "Server Busy") {
         alert("Unauthorized access!");
       } else if (response?.status) {
-        setResp(response.data.loginCredentials);
-        setNotes(response.data.notes);
-        console.log(JSON.stringify(response.data.notes));
+        setResp(await response.data.loginCredentials);
+        setNotes(await response.data.notes);
+        //console.log(JSON.stringify(response.data.notes));
         const v = {};
         const u = [];
         await response.data.categories.map((c) => {
           v[c.name] = c._id;
           u.push(c.name);
         });
-        console.log(JSON.stringify(v));
-        console.log(JSON.stringify(u));
+        //console.log(JSON.stringify(v));
+        //console.log(JSON.stringify(u));
         setCategoryMap({ ...v });
         setCategories(["all-category", "non-category", ...u]);
         setQueryCategory("all-category");
@@ -133,12 +133,13 @@ const Home = () => {
 
       const response = await axios.post(`${API_URL}/home/addNote`, newNote);
 
-      if (response.data._id !== "") {
-        alert("New note added!");
-        newNote = response.data;
+      if ((await response.data._id) !== "") {
+        //console.log(JSON.stringify(response.data));
+        newNote = await response.data;
         setNotes([newNote, ...notes]);
         setTitle("");
         setContent("");
+        alert("New note added!");
       } else {
         alert("New note not synced!");
       }
@@ -174,9 +175,9 @@ const Home = () => {
         prevNoteRef.current.title === title &&
         prevNoteRef.current.content === content
       ) {
-        alert("No edit done!");
         prevNoteRef.current.title = "";
         prevNoteRef.current.content = "";
+        alert("No edit done!");
         return;
       }
 
@@ -194,17 +195,18 @@ const Home = () => {
       );
       //alert(JSON.stringify(response.data));
 
-      if (response.data !== null) {
-        updatedNote.lastModified = response.data.lastModified;
+      if ((await response.data) !== null) {
+        updatedNote.lastModified = await response.data.lastModified;
         const updatedNotesList = notes.map((note) =>
           note._id === selectedNote._id ? updatedNote : note
         );
-        alert("Note updated!");
+
         setNotes(updatedNotesList);
         setTitle("");
         setContent("");
         setSelectedNote(null);
         setAddNoteCategory("non-category");
+        alert("Note updated!");
       } else {
         alert("Note update not synced!");
       }
@@ -239,11 +241,12 @@ const Home = () => {
       const response = await axios.post(`${API_URL}/home/deleteNote`, {
         deleteNoteId: deleteNoteId,
       });
-      if (response.data?._id === deleteNoteId) {
+      if ((await response.data?._id) === deleteNoteId) {
         //alert(JSON.stringify(response.data));
-        alert("Note deleted!");
+
         const updatedNotes = notes.filter((note) => note._id !== deleteNoteId);
         setNotes(updatedNotes);
+        alert("Note deleted!");
       } else {
         alert("Note delete not synced!");
       }
@@ -258,13 +261,13 @@ const Home = () => {
   const handleLogout = async () => {
     if (window.confirm("Are you sure to logout?")) {
       try {
-        const user = JSON.parse(localStorage.getItem("userInfo"));
+        const user = await JSON.parse(localStorage.getItem("userInfo"));
         const response = await axios.post(
           `${API_URL}/login/logout`,
           user.email
         );
         //alert(response.data);
-        if (response.data === "deleted") {
+        if ((await response.data) === "deleted") {
           localStorage.clear();
           window.location.href = "/login";
         } else {
@@ -279,14 +282,14 @@ const Home = () => {
     }
   };
 
-  const handleOnSelect = (e) => {
+  const handleOnSelect = async (e) => {
     e.preventDefault();
-    setQueryCategory(e.target.value);
+    setQueryCategory(await e.target.value);
   };
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
-    const categ = e.target.name.value.trim();
+    const categ = await e.target.name.value.trim();
     if (categ.length === 0) {
       alert("Please enter valid category!");
       return;
@@ -301,11 +304,11 @@ const Home = () => {
         userId: resp._id,
       });
 
-      if (response.data?._id) {
-        alert(`Category "${categ}" added!`);
-        setCategoryMap({ ...categoryMap, [categ]: response.data?._id });
+      if (await response.data?._id) {
+        setCategoryMap({ ...categoryMap, [categ]: await response.data?._id });
         setCategories([...categories, categ]);
         setShowAddCategoryModal(false);
+        alert(`Category "${categ}" added!`);
       } else {
         alert("Try again, category not added!");
         return;
@@ -327,7 +330,7 @@ const Home = () => {
     ) {
       return;
     }
-    const cat = e.target.deleteSelect.value;
+    const cat = await e.target.deleteSelect.value;
     //alert(categoryMap[cat]);
 
     const deleteCategoryId = categoryMap[cat];
@@ -339,8 +342,7 @@ const Home = () => {
 
       //alert(JSON.stringify(response.data));
 
-      if (response.data) {
-        alert(`Category "${cat}" deleted!`);
+      if (await response.data) {
         if (deleteCategoryId) {
           setNotes((current) =>
             current.filter((n) => {
@@ -364,6 +366,7 @@ const Home = () => {
         }
 
         setShowDeleteCategoryModal(false);
+        alert(`Category "${cat}" deleted!`);
       } else {
         alert("Try again, category not deleted!");
         return;

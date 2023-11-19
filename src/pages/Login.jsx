@@ -16,15 +16,15 @@ const Login = () => {
   const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
+  useEffect(async () => {
+    const user = await JSON.parse(localStorage.getItem("userInfo"));
     if (user && user.token) {
       navigate("/home");
     }
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = async (e) => {
+    const { name, value } = await e.target;
     setFormData({ ...formData, [name]: value });
     //console.log(formData);
   };
@@ -37,24 +37,24 @@ const Login = () => {
       const response = await axios.post(`${API_URL}/login`, formData);
       setShowLoader(false);
       //console.log(response);
-      if (response.data === "Invalid username or password!") {
+      if ((await response.data) === "Invalid username or password!") {
         alert("Invalid username or password!");
-      } else if (response.data === "Verify your email") {
+      } else if ((await response.data) === "Verify your email") {
         alert("Please, verify your email id and then login!");
       } else if (response?.status) {
-        localStorage.setItem("userInfo", JSON.stringify(response.data));
+        localStorage.setItem("userInfo", JSON.stringify(await response.data));
         navigate("/home");
       }
     } catch (e) {
       console.log("Error during login!", e);
       setShowLoader(false);
-      alert(
-        "Connection error, please try sometime later or it persists contact admin!"
-      );
       setFormData({
         email: formData.email,
         password: "",
       });
+      alert(
+        "Connection error, please try sometime later or it persists contact admin!"
+      );
     }
   };
   return (

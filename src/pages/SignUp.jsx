@@ -17,15 +17,15 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
+  useEffect(async () => {
+    const user = await JSON.parse(localStorage.getItem("userInfo"));
     if (user && user.token) {
       navigate("/home");
     }
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = async (e) => {
+    const { name, value } = await e.target;
     setFormData({ ...formData, [name]: value });
     //console.log(formData);
   };
@@ -37,15 +37,15 @@ const SignUp = () => {
       const response = await axios.post(`${API_URL}/signin/verify`, formData);
       //console.log(response);
       setShowLoader(false);
-      if (response.data === "none") {
+      if ((await response.data) === "none") {
         alert(
           "Registration link successfully sent to your email id! Please, verify and then login!"
         );
         navigate("/login");
-      } else if (response.data === "user") {
+      } else if ((await response.data) === "user") {
         alert("User id exists, already! Please, login!");
         navigate("/login");
-      } else if (response.data === "verifyUser") {
+      } else if ((await response.data) === "verifyUser") {
         alert("Verification email sent, already! Please, verify!");
       }
       setFormData({
@@ -56,14 +56,14 @@ const SignUp = () => {
     } catch (e) {
       console.log("Error during registration! ", e);
       setShowLoader(false);
-      alert(
-        "Connection error, please try sometime later or it persists contact admin!"
-      );
       setFormData({
         name: formData.name,
         email: formData.email,
         password: "",
       });
+      alert(
+        "Connection error, please try sometime later or it persists contact admin!"
+      );
     }
   };
   return (
