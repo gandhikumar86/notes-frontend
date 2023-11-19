@@ -95,6 +95,7 @@ const Home = () => {
           Authorization: token,
         },
       };
+      setShowLoader(true);
       const response = await axios.get(`${API_URL}/home`, config);
       //console.log(response);
       if ((await response.data) === "Invalid Token") {
@@ -123,6 +124,8 @@ const Home = () => {
       alert(
         "Connection error, please try afer sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -142,7 +145,7 @@ const Home = () => {
         userId: resp._id,
         categoryId: categoryMap[addNoteCategory],
       };
-
+      setShowLoader(true);
       const response = await axios.post(`${API_URL}/home/addNote`, newNote);
 
       if ((await response.data._id) !== "") {
@@ -161,6 +164,8 @@ const Home = () => {
       alert(
         "Connection error, please try after sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -202,7 +207,7 @@ const Home = () => {
         userId: resp._id,
         categoryId: categoryMap[addNoteCategory],
       };
-
+      setShowLoader(true);
       const response = await axios.post(
         `${API_URL}/home/editNote`,
         updatedNote
@@ -229,6 +234,8 @@ const Home = () => {
       alert(
         "Connection error, please try afer sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -253,6 +260,7 @@ const Home = () => {
       if (!window.confirm("Are you sure to delete the note?")) {
         return;
       }
+      setShowLoader(true);
       const response = await axios.post(`${API_URL}/home/deleteNote`, {
         deleteNoteId: deleteNoteId,
       });
@@ -270,6 +278,8 @@ const Home = () => {
       alert(
         "Connection error, please try after sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -314,6 +324,7 @@ const Home = () => {
       return;
     }
     try {
+      setShowLoader(true);
       const response = await axios.post(`${API_URL}/home/addCategory`, {
         categ: categ,
         userId: resp._id,
@@ -333,6 +344,8 @@ const Home = () => {
       alert(
         "Connection error, please try sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -351,6 +364,7 @@ const Home = () => {
     const deleteCategoryId = categoryMap[cat];
 
     try {
+      setShowLoader(true);
       const response = await axios.post(`${API_URL}/home/deleteCategory`, {
         deleteCategoryId: deleteCategoryId,
       });
@@ -386,6 +400,8 @@ const Home = () => {
       alert(
         "Connection error, please try sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
