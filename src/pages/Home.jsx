@@ -341,9 +341,19 @@ const Home = () => {
 
       if (response.data) {
         alert(`Category "${cat}" deleted!`);
-        setNotes((current) =>
-          current.filter((n) => n.categoryId !== deleteCategoryId)
-        );
+        if (deleteCategoryId) {
+          setNotes((current) =>
+            current.filter((n) => {
+              n.categoryId !== deleteCategoryId;
+            })
+          );
+        } else {
+          setNotes((current) =>
+            current.filter((n) => {
+              n.categoryId != deleteCategoryId;
+            })
+          );
+        }
 
         if (deleteCategoryId) {
           setCategoryMap((current) => {
