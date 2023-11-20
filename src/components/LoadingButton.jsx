@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Loader from "../assets/loader.svg?react";
 
 const LoadingButton = ({

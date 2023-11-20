@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Container, Form, Button, FormGroup } from "react-bootstrap";
 import "../styles/SignUp.css";

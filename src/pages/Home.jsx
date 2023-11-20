@@ -1,10 +1,20 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/Home.css";
 import axios from "axios";
 import API_URL from "../../config/global";
+// eslint-disable-next-line no-unused-vars
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Form, Modal } from "react-bootstrap";
-import LoadingButton from "../components/LoadingButton";
+import {
+  Button,
+  Col,
+  Form,
+  Modal,
+  Row,
+  Nav,
+  Navbar,
+  NavDropdown,
+} from "react-bootstrap";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -66,6 +76,7 @@ const Home = () => {
   };
 
   const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const handleAddNoteModalClose = () => {
     setShowAddNoteModal(false);
   };
@@ -87,6 +98,7 @@ const Home = () => {
     } else {
       navigate("/login");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const getData = async (token) => {
     try {
@@ -154,6 +166,7 @@ const Home = () => {
         setNotes([newNote, ...notes]);
         setTitle("");
         setContent("");
+        setAddNoteCategory("non-category");
         setShowAddNoteModal(false);
         alert("New note added!");
       } else {
@@ -166,6 +179,7 @@ const Home = () => {
       );
     } finally {
       setShowLoader(false);
+      setShowAddNoteModal(false);
     }
   };
 
@@ -236,6 +250,7 @@ const Home = () => {
       );
     } finally {
       setShowLoader(false);
+      setShowAddNoteModal(false);
     }
   };
 
@@ -280,6 +295,7 @@ const Home = () => {
       );
     } finally {
       setShowLoader(false);
+      setShowDeleteCategoryModal(false);
     }
   };
 
@@ -304,6 +320,8 @@ const Home = () => {
       alert(
         "Connection error, please try sometime later or it persists contact admin!"
       );
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -351,6 +369,18 @@ const Home = () => {
 
   const handleDeleteCategory = async (e) => {
     e.preventDefault();
+    const cat = e.target.deleteSelect.value;
+
+    if (cat === "non-category") {
+      const isAnyNoteInCategory = notes.some((n) => n.categoryId === null);
+
+      if (!isAnyNoteInCategory) {
+        alert("Non-category has no notes to delete!");
+        setShowDeleteCategoryModal(false);
+        return;
+      }
+    }
+
     if (
       !window.confirm(
         "Deleting category will delete all notes associated with it!\nIf 'non-category' selected, only the notes will be deleted!\nAre you sure to delete it, any way?"
@@ -358,7 +388,7 @@ const Home = () => {
     ) {
       return;
     }
-    const cat = e.target.deleteSelect.value;
+
     //alert(categoryMap[cat]);
 
     const deleteCategoryId = categoryMap[cat];
@@ -382,6 +412,7 @@ const Home = () => {
 
         if (deleteCategoryId) {
           setCategoryMap((current) => {
+            // eslint-disable-next-line no-unused-vars
             const { cat, ...rest } = current;
             return rest;
           });
@@ -390,7 +421,7 @@ const Home = () => {
 
         setShowDeleteCategoryModal(false);
         if (deleteCategoryId) alert(`Category "${cat}" deleted!`);
-        else alert("Non category notes delted!");
+        else alert("Non category notes deleted!");
       } else {
         alert("Try again, category not deleted!");
         return;
@@ -402,6 +433,7 @@ const Home = () => {
       );
     } finally {
       setShowLoader(false);
+      setShowDeleteCategoryModal(false);
     }
   };
 
@@ -415,165 +447,57 @@ const Home = () => {
         <div
           style={showLoader ? { pointerEvents: "none", opacity: "0.4" } : {}}
         >
-          <div>
-            <h1>Welcome to our Notes App, {resp.name}!</h1>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h1>Notes App!</h1>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+              }}
+            >
+              <h4>{resp.name}</h4>
+              <Button
+                type="button"
+                onClick={handleLogout}
+                disabled={showLoader}
+                style={{
+                  backgroundColor: "red",
+                  height: "fit-content",
+                  marginLeft: "8px",
+                }}
+              >
+                Log out
+              </Button>
+            </div>
           </div>
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               marginBottom: "16px",
+              marginTop: "8px",
             }}
           >
             <div>
-              <Form.Group controlId="queryCategorySelect">
-                <Form.Label>View by category</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={queryCategory}
-                  onChange={handleOnSelect}
-                >
-                  {categories.map((c, i) => (
-                    <option key={i}>{c}</option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-              <Button onClick={handleAddCategoryModalShow}>Add category</Button>
-              <Modal
-                show={showAddCategoryModal}
-                onHide={handleAddCategoryModalClose}
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>Please, enter the category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <Form onSubmit={(e) => handleAddCategory(e)}>
-                    <Form.Group>
-                      <Form.Label>Category</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="name"
-                        autoComplete="off"
-                      />
-                    </Form.Group>
-                    <LoadingButton
-                      text="Add Category"
-                      type="submit"
-                      loading={showLoader}
-                      disabled={showLoader}
-                    ></LoadingButton>
-                  </Form>
-                </Modal.Body>
-              </Modal>
-              <Button
-                style={{ backgroundColor: "red" }}
-                onClick={handleDeleteCategoryModalShow}
-              >
-                Delete category
-              </Button>
-              <Modal
-                show={showDeleteCategoryModal}
-                onHide={handleDeleteCategoryModalClose}
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>
-                    Please, select the category to delete!
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <Form onSubmit={(e) => handleDeleteCategory(e)}>
-                    <Form.Group>
-                      <Form.Label>Category</Form.Label>
-                      <Form.Control as="select" name="deleteSelect">
-                        {categories.map((c, i) =>
-                          c === "all-category" ? (
-                            ""
-                          ) : (
-                            <option key={i}>{c}</option>
-                          )
-                        )}
-                      </Form.Control>
-                    </Form.Group>
-                    <LoadingButton
-                      text="Delete Category"
-                      type="submit"
-                      loading={showLoader}
-                      disabled={showLoader}
-                      style={{ backgroundColor: "red" }}
-                    ></LoadingButton>
-                  </Form>
-                </Modal.Body>
-              </Modal>
-              <Button onClick={handleAddNoteModalShow}>Add Note</Button>{" "}
-              <Modal show={showAddNoteModal} onHide={handleCancel}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Add Note</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <form
-                    className="note-form"
-                    onSubmit={(event) =>
-                      selectedNote
-                        ? handleUpdateNote(event)
-                        : handleAddNote(event)
-                    }
+              <Form.Group as={Row} controlId="queryCategorySelect">
+                <Col sm="auto">
+                  <Form.Control
+                    as="select"
+                    value={queryCategory}
+                    onChange={handleOnSelect}
                   >
-                    <input
-                      value={title}
-                      onChange={(event) => setTitle(event.target.value)}
-                      placeholder="Title"
-                      required
-                    ></input>
-                    <textarea
-                      value={content}
-                      onChange={(event) => setContent(event.target.value)}
-                      placeholder="Content"
-                      rows={10}
-                      required
-                    ></textarea>
-                    <Form.Group controlId="addNoteCategorySelect">
-                      <Form.Label>Select category</Form.Label>
-                      <Form.Control
-                        disabled={selectedNote}
-                        as="select"
-                        value={addNoteCategory}
-                        onChange={(e) => {
-                          //alert(e.target.value);
-                          setAddNoteCategory(e.target.value);
-                        }}
-                      >
-                        {categories.map((c, i) =>
-                          c === "all-category" ? (
-                            ""
-                          ) : (
-                            <option key={i}>{c}</option>
-                          )
-                        )}
-                      </Form.Control>
-                    </Form.Group>
-                    {selectedNote ? (
-                      <div className="edit-buttons">
-                        <LoadingButton
-                          text="Save"
-                          type="submit"
-                          loading={showLoader}
-                          disabled={showLoader}
-                        ></LoadingButton>
-                        <button onClick={handleCancel} disabled={showLoader}>
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <LoadingButton
-                        text="Add note"
-                        type="submit"
-                        loading={showLoader}
-                        disabled={showLoader}
-                      ></LoadingButton>
-                    )}
-                  </form>
-                </Modal.Body>
-              </Modal>
+                    {categories.map((c, i) => (
+                      <option key={i}>{c}</option>
+                    ))}
+                  </Form.Control>
+                </Col>
+              </Form.Group>
             </div>
             <div>
               <input
@@ -584,13 +508,18 @@ const Home = () => {
               />
             </div>
             <div>
-              <LoadingButton
-                onSubmit={handleLogout}
-                text="Log out"
-                loading={showLoader}
-                disabled={showLoader}
+              <Button onClick={handleAddNoteModalShow}>Add Note</Button>
+            </div>
+            <div>
+              <Button onClick={handleAddCategoryModalShow}>Add category</Button>
+            </div>
+            <div>
+              <Button
                 style={{ backgroundColor: "red" }}
-              ></LoadingButton>
+                onClick={handleDeleteCategoryModalShow}
+              >
+                Delete category
+              </Button>
             </div>
           </div>
           <div className="app-container">
@@ -642,18 +571,137 @@ const Home = () => {
                           </div>
                           <button
                             onClick={(event) => deleteNote(event, note._id)}
+                            style={{ color: "red" }}
                           >
                             x
                           </button>
                         </div>
                         <h2>{note.title}</h2>
-                        <p>{note.content}</p>
+                        <p style={{}} className="note-content">
+                          {note.content}
+                        </p>
                         <div className="notes-footer">{note.lastModified}</div>
                       </div>
                     );
                   })}
             </div>
           </div>
+          <Modal
+            disabled={showLoader}
+            show={showAddCategoryModal}
+            onHide={handleAddCategoryModalClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Please, enter the category!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form onSubmit={(e) => handleAddCategory(e)}>
+                <Form.Group>
+                  <Form.Label>Category</Form.Label>
+                  <Form.Control type="text" name="name" autoComplete="off" />
+                </Form.Group>
+                <Button variant="primary" type="submit" disabled={showLoader}>
+                  Add Category
+                </Button>
+              </Form>
+            </Modal.Body>
+          </Modal>
+          <Modal
+            disabled={showLoader}
+            show={showDeleteCategoryModal}
+            onHide={handleDeleteCategoryModalClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Please, select the category to delete!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form onSubmit={(e) => handleDeleteCategory(e)}>
+                <Form.Group>
+                  <Form.Label>Category</Form.Label>
+                  <Form.Control as="select" name="deleteSelect">
+                    {categories.map((c, i) =>
+                      c === "all-category" ? "" : <option key={i}>{c}</option>
+                    )}
+                  </Form.Control>
+                </Form.Group>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={showLoader}
+                  style={{ backgroundColor: "red" }}
+                >
+                  Delete Category
+                </Button>
+              </Form>
+            </Modal.Body>
+          </Modal>
+          <Modal
+            disabled={showLoader}
+            show={showAddNoteModal}
+            onHide={handleCancel}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Add Note!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <form
+                className="note-form"
+                onSubmit={(event) =>
+                  selectedNote ? handleUpdateNote(event) : handleAddNote(event)
+                }
+              >
+                <input
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder="Title"
+                  required
+                ></input>
+                <textarea
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  placeholder="Content"
+                  rows={10}
+                  required
+                ></textarea>
+                <Form.Group controlId="addNoteCategorySelect">
+                  <Form.Label>Select category</Form.Label>
+                  <Form.Control
+                    disabled={selectedNote}
+                    as="select"
+                    value={addNoteCategory}
+                    onChange={(e) => {
+                      //alert(e.target.value);
+                      setAddNoteCategory(e.target.value);
+                    }}
+                  >
+                    {categories.map((c, i) =>
+                      c === "all-category" ? "" : <option key={i}>{c}</option>
+                    )}
+                  </Form.Control>
+                </Form.Group>
+                {selectedNote ? (
+                  <div className="edit-buttons">
+                    <button type="submit" disabled={showLoader}>
+                      Save
+                    </button>
+                    <button onClick={handleCancel} disabled={showLoader}>
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button type="submit" disabled={showLoader}>
+                    Add note
+                  </button>
+                )}
+              </form>
+            </Modal.Body>
+          </Modal>
         </div>
       )}
       {Object.keys(resp).length === 0 && showLoader === true ? (
