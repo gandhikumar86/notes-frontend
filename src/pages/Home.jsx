@@ -14,6 +14,8 @@ import {
   Nav,
   Navbar,
   NavDropdown,
+  DropdownButton,
+  Dropdown,
 } from "react-bootstrap";
 
 const Home = () => {
@@ -484,8 +486,32 @@ const Home = () => {
               marginTop: "8px",
             }}
           >
+            <DropdownButton id="dropdown-item-button" title="Note Actions">
+              <Dropdown.Item
+                as="button"
+                onClick={handleAddNoteModalShow}
+                style={{ color: "blue" }}
+              >
+                Add Note
+              </Dropdown.Item>
+              <Dropdown.Item
+                as="button"
+                onClick={handleAddCategoryModalShow}
+                style={{ color: "blue" }}
+              >
+                Add Category
+              </Dropdown.Item>
+              <Dropdown.Item
+                as="button"
+                onClick={handleDeleteCategoryModalShow}
+                style={{ color: "red" }}
+              >
+                Delete Category
+              </Dropdown.Item>
+            </DropdownButton>
+
             <div>
-              <Form.Group as={Row} controlId="queryCategorySelect">
+              <Form.Group as={Row} controlId="queryCategorySelect" style={{}}>
                 <Col sm="auto">
                   <Form.Control
                     as="select"
@@ -507,7 +533,7 @@ const Home = () => {
                 value={query}
               />
             </div>
-            <div>
+            {/* <div>
               <Button onClick={handleAddNoteModalShow}>Add Note</Button>
             </div>
             <div>
@@ -520,7 +546,7 @@ const Home = () => {
               >
                 Delete category
               </Button>
-            </div>
+            </div> */}
           </div>
           <div className="app-container">
             <div className="notes-grid">
