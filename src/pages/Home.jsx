@@ -11,9 +11,6 @@ import {
   Form,
   Modal,
   Row,
-  Nav,
-  Navbar,
-  NavDropdown,
   DropdownButton,
   Dropdown,
 } from "react-bootstrap";
@@ -606,7 +603,11 @@ const Home = () => {
                         <p style={{}} className="note-content">
                           {note.content}
                         </p>
-                        <div className="notes-footer">{note.lastModified}</div>
+                        <div className="notes-footer">
+                          {new Date(note.lastModified).toLocaleString(
+                            navigator.language
+                          )}
+                        </div>
                       </div>
                     );
                   })}
