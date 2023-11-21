@@ -15,12 +15,31 @@ body {
 .app-container1 {
   grid-template-columns: 1fr;
 }
+.header-end {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.sub-head {
+  display: block;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
 
 @media (min-width: 600px) {
   .app-container1 {
     display: grid;
     grid-template-columns: 200px 1fr;
     gap: 20px;
+  }
+  .header-end {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .sub-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    margin-top: 8px;
   }
 }
 

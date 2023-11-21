@@ -454,12 +454,7 @@ const Home = () => {
             }}
           >
             <h1>Notes App!</h1>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-              }}
-            >
+            <div className="header-end">
               <h4>{resp.name}</h4>
               <Button
                 type="button"
@@ -475,37 +470,32 @@ const Home = () => {
               </Button>
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "16px",
-              marginTop: "8px",
-            }}
-          >
-            <DropdownButton id="dropdown-item-button" title="Note Actions">
-              <Dropdown.Item
-                as="button"
-                onClick={handleAddNoteModalShow}
-                style={{ color: "blue" }}
-              >
-                Add Note
-              </Dropdown.Item>
-              <Dropdown.Item
-                as="button"
-                onClick={handleAddCategoryModalShow}
-                style={{ color: "blue" }}
-              >
-                Add Category
-              </Dropdown.Item>
-              <Dropdown.Item
-                as="button"
-                onClick={handleDeleteCategoryModalShow}
-                style={{ color: "red" }}
-              >
-                Delete Category
-              </Dropdown.Item>
-            </DropdownButton>
+          <div className="sub-head">
+            <div style={{ marginBottom: "12px" }}>
+              <DropdownButton id="dropdown-item-button" title="Note Actions">
+                <Dropdown.Item
+                  as="button"
+                  onClick={handleAddNoteModalShow}
+                  style={{ color: "blue" }}
+                >
+                  Add Note
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as="button"
+                  onClick={handleAddCategoryModalShow}
+                  style={{ color: "blue" }}
+                >
+                  Add Category
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as="button"
+                  onClick={handleDeleteCategoryModalShow}
+                  style={{ color: "red" }}
+                >
+                  Delete Category
+                </Dropdown.Item>
+              </DropdownButton>
+            </div>
 
             <div>
               <Form.Group as={Row} controlId="queryCategorySelect" style={{}}>
