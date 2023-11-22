@@ -40,7 +40,7 @@ const SignUp = () => {
       setShowLoader(false);
       if ((await response.data) === "none") {
         alert(
-          "Registration link successfully sent to your email id! Please, verify and then login!"
+          "Registration link successfully sent to your email id! Check your spam folder if not received in inbox. Please, verify and then login!"
         );
         navigate("/login");
       } else if ((await response.data) === "user") {
