@@ -5,6 +5,7 @@ import "../styles/SignUp.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_URL from "../../config/global";
+import parse from "html-react-parser";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -54,7 +55,7 @@ const SignUp = () => {
       } else if ((await response.data) === "user") {
         setMsg({
           title: "Already registered!",
-          body: "User id exists, already! Please, login!",
+          body: `User id exists, already! Please, <a href="/login">login</a>!`,
         });
         //navigate("/login");
       } else if ((await response.data) === "verifyUser") {
@@ -142,7 +143,7 @@ const SignUp = () => {
           <Modal.Title>{msg.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>{msg.body}</p>
+          <p>{parse(msg.body)}</p>
         </Modal.Body>
         <Modal.Footer>
           <Button
