@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, FormGroup } from "react-bootstrap";
+import { Container, Form, Button, Modal } from "react-bootstrap";
 import "../styles/SignUp.css";
 import "../styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,7 +14,15 @@ const Login = () => {
     password: "",
   });
 
+  const defaultMsg = {
+    title: "Please, wait...!",
+    body: "We are getting back to you in a while....!",
+  };
+
   const [showLoader, setShowLoader] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [msg, setMsg] = useState(defaultMsg);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,15 +43,23 @@ const Login = () => {
     try {
       //alert(JSON.stringify(formData));
       setShowLoader(true);
+      setShowLoginModal(true);
       const response = await axios.post(`${API_URL}/login`, formData);
       setShowLoader(false);
       //console.log(response);
       if ((await response.data) === "Invalid username or password!") {
-        alert("Invalid username or password!");
+        setMsg({
+          title: "Invalid username or password!",
+          body: "Username or password, entered is wrong. Please try with right credentials!",
+        });
       } else if ((await response.data) === "Verify your email") {
-        alert("Please, verify your email id and then login!");
+        setMsg({
+          title: "Verify your account!",
+          body: "Verification email sent already. Please check your inbox or spam folder!",
+        });
       } else if (response?.status) {
         localStorage.setItem("userInfo", JSON.stringify(await response.data));
+        handleShowLoginModalClose();
         navigate("/home");
       }
     } catch (e) {
@@ -53,10 +69,15 @@ const Login = () => {
         email: formData.email,
         password: "",
       });
-      alert(
-        "Connection error, please try sometime later or it persists contact admin!"
-      );
+      setMsg({
+        title: "Connection Error!",
+        body: "Connection error, please try sometime later or it persists contact admin!",
+      });
     }
+  };
+  const handleShowLoginModalClose = () => {
+    setShowLoginModal(false);
+    setMsg(defaultMsg);
   };
   return (
     <Container>
@@ -96,6 +117,29 @@ const Login = () => {
           <Link to={showLoader ? null : "/"}>Register</Link>
         </p>
       </Form>
+      <Modal
+        show={showLoginModal}
+        backdrop="static"
+        keyboard={false}
+        onHide={handleShowLoginModalClose}
+      >
+        <Modal.Header closeButton={!showLoader}>
+          <Modal.Title>{msg.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{msg.body}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            type="button"
+            disabled={showLoader}
+            onClick={handleShowLoginModalClose}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

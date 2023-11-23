@@ -50,7 +50,14 @@ const Home = () => {
   //   },
   // ]);
 
+  const defaultLogoutMsg = {
+    title: "Logout",
+    body: "Are you sure to logout?",
+  };
+
   const [showLoader, setShowLoader] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [logoutMsg, setLogoutMsg] = useState(defaultLogoutMsg);
 
   const [query, setQuery] = useState("");
   const [notes, setNotes] = useState([]);
@@ -299,26 +306,29 @@ const Home = () => {
   };
 
   const handleLogout = async () => {
-    if (!window.confirm("Are you sure to logout?")) {
-      return;
-    }
     try {
       setShowLoader(true);
       const user = JSON.parse(localStorage.getItem("userInfo"));
       const response = await axios.post(`${API_URL}/login/logout`, user.email);
+
       //alert(response.data);
       if ((await response.data) === "deleted") {
         localStorage.clear();
         setShowLoader(false);
         navigate("/login");
       } else {
-        alert("Server Busy!");
+        setShowLoader(false);
+        setLogoutMsg({
+          title: "Server Busy!",
+          body: "Server Busy! Please, try after some time!",
+        });
       }
     } catch (e) {
       console.log("Log out Handler", e);
-      alert(
-        "Connection error, please try sometime later or it persists contact admin!"
-      );
+      setLogoutMsg({
+        title: "Connection Error!",
+        body: "Connection error, please try sometime later or it persists contact admin!",
+      });
     } finally {
       setShowLoader(false);
     }
@@ -436,6 +446,11 @@ const Home = () => {
     }
   };
 
+  const handleShowLogoutModalClose = () => {
+    setShowLogoutModal(false);
+    setLogoutMsg(defaultLogoutMsg);
+  };
+
   function getKeyByValue(object, value) {
     return Object.keys(object).find((key) => object[key] === value);
   }
@@ -458,8 +473,7 @@ const Home = () => {
               <h4>{resp.name}</h4>
               <Button
                 type="button"
-                onClick={handleLogout}
-                disabled={showLoader}
+                onClick={() => setShowLogoutModal(true)}
                 style={{
                   backgroundColor: "red",
                   height: "fit-content",
@@ -718,6 +732,38 @@ const Home = () => {
                 )}
               </form>
             </Modal.Body>
+          </Modal>
+          <Modal
+            show={showLogoutModal}
+            backdrop="static"
+            keyboard={false}
+            onHide={handleShowLogoutModalClose}
+          >
+            <Modal.Header closeButton={!showLoader}>
+              <Modal.Title>{logoutMsg.title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>{logoutMsg.body}</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="warning"
+                type="button"
+                disabled={showLoader}
+                onClick={handleLogout}
+                style={{ marginRight: "32px" }}
+              >
+                Yes
+              </Button>
+              <Button
+                variant="info"
+                type="button"
+                disabled={showLoader}
+                onClick={handleShowLogoutModalClose}
+              >
+                No
+              </Button>
+            </Modal.Footer>
           </Modal>
         </div>
       )}

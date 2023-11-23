@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, FormGroup } from "react-bootstrap";
+import { Container, Form, Button, Modal } from "react-bootstrap";
 import "../styles/SignUp.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_URL from "../../config/global";
-import LoadingButton from "../components/LoadingButton";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +13,14 @@ const SignUp = () => {
     password: "",
   });
 
+  const defaultMsg = {
+    title: "Please, wait...!",
+    body: "We are getting back to you in a while....!",
+  };
+
   const [showLoader, setShowLoader] = useState(false);
+  const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const [msg, setMsg] = useState(defaultMsg);
 
   const navigate = useNavigate();
 
@@ -35,19 +41,27 @@ const SignUp = () => {
     //console.log(formData);
     try {
       setShowLoader(true);
+      setShowSignUpModal(true);
       const response = await axios.post(`${API_URL}/signin/verify`, formData);
       //console.log(response);
       setShowLoader(false);
       if ((await response.data) === "none") {
-        alert(
-          "Registration link successfully sent to your email id! Check your spam folder if not received in inbox. Please, verify and then login!"
-        );
-        navigate("/login");
+        setMsg({
+          title: "Registration success!",
+          body: "Registration link successfully sent to your email id! Check your spam folder if not received in inbox. Please, verify and then login!",
+        });
+        //navigate("/login");
       } else if ((await response.data) === "user") {
-        alert("User id exists, already! Please, login!");
-        navigate("/login");
+        setMsg({
+          title: "Already registered!",
+          body: "User id exists, already! Please, login!",
+        });
+        //navigate("/login");
       } else if ((await response.data) === "verifyUser") {
-        alert("Verification email sent, already! Please, verify!");
+        setMsg({
+          title: "Please, verify your account!",
+          body: "Verification email sent, already! Please, verify!",
+        });
       }
       setFormData({
         name: "",
@@ -62,16 +76,21 @@ const SignUp = () => {
         email: formData.email,
         password: "",
       });
-      alert(
-        "Connection error, please try sometime later or it persists contact admin!"
-      );
+      setMsg({
+        title: "Connection Error!",
+        body: "Connection error, please try sometime later or it persists contact admin!",
+      });
     }
+  };
+  const handleShowSignUpModalClose = () => {
+    setShowSignUpModal(false);
+    setMsg(defaultMsg);
   };
   return (
     <Container>
       <h1>Notes App</h1>
       <h2>Registration Form</h2>
-      <Form onSubmit={(e) => handleSubmit(e)} disabled={showLoader}>
+      <Form onSubmit={(e) => handleSubmit(e)}>
         <Form.Group>
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -105,17 +124,37 @@ const SignUp = () => {
             required
           />
         </Form.Group>
-        <LoadingButton
-          text="Register"
-          type="submit"
-          loading={showLoader}
-          disabled={showLoader}
-        />
+        <Button type="submit" variant="primary">
+          Register
+        </Button>
         <p>
           Already have an account?
           <Link to={showLoader ? null : "/login"}>Login</Link>
         </p>
       </Form>
+      <Modal
+        show={showSignUpModal}
+        backdrop="static"
+        keyboard={false}
+        onHide={handleShowSignUpModalClose}
+      >
+        <Modal.Header closeButton={!showLoader}>
+          <Modal.Title>{msg.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{msg.body}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            type="button"
+            disabled={showLoader}
+            onClick={handleShowSignUpModalClose}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
