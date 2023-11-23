@@ -308,6 +308,10 @@ const Home = () => {
   const handleLogout = async () => {
     try {
       setShowLoader(true);
+      setLogoutMsg({
+        title: "Log out",
+        body: "Wait a moment, please...!",
+      });
       const user = JSON.parse(localStorage.getItem("userInfo"));
       const response = await axios.post(`${API_URL}/login/logout`, user.email);
 
@@ -319,14 +323,14 @@ const Home = () => {
       } else {
         setShowLoader(false);
         setLogoutMsg({
-          title: "Server Busy!",
+          title: "Log out",
           body: "Server Busy! Please, try after some time!",
         });
       }
     } catch (e) {
       console.log("Log out Handler", e);
       setLogoutMsg({
-        title: "Connection Error!",
+        title: "Log out",
         body: "Connection error, please try sometime later or it persists contact admin!",
       });
     } finally {
